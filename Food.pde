@@ -14,25 +14,23 @@ class Food {
   void run() {
     update();
     display();
+    boundaries();
+    edges();
   }
 
   void update() {
     location.add(velocity);
     velocity.add(acceleration);
-    //lifespan -= 2.0;
+    acceleration.mult(0);
+    velocity.limit(25);
   }
 
   void display() {
-    stroke(0, lifespan);
-    strokeWeight(2);
-    fill(255, 0, 0, lifespan);
-    ellipse(location.x, location.y, 12, 12);
+    image(fly, location.x, location.y, 15, 15);
   }
 
   void applyForce(PVector r) {
-    for (Food f: foods) {
-      f.applyForce(r);
-    }
+    acceleration.add(r);
   }
 
   void applyRepeller(Creature creature) {
@@ -42,12 +40,64 @@ class Food {
     }
   }
 
+  void boundaries() {
+    float d = 50;
+    PVector force = new PVector(0, 0);
+
+    if (location.x < d) {
+      force.x = 1.5;
+    } 
+    else if (location.x > width -d) {
+      force.x = -1.5;
+    } 
+    if (location.y < d) {
+      force.y = 1.5;
+    } 
+    else if (location.y > height-d) {
+      force.y = -1.5;
+    } 
+
+    force.normalize();
+    force.mult(0.01);
+    applyForce(force);
+  }
+  
+  void edges() {
+    if (location.x > width+50) {
+      velocity.x *= -1;
+      location.x = width+50;
+    }
+    if (location.x < -50) {
+      velocity.x *= -1; 
+      location.x = -50;
+    }
+    if (location.y > height+50) {
+      velocity.y *= -1;
+      location.y = height+50;
+    }
+    if (location.y < -50) {
+      velocity.y *= -1;
+      location.y = -50;
+    }
+  }
+
   boolean isDead() {
-    if (lifespan < 0.0) {
+    if (lifespan < 1.0) {
       return true;
     } 
     else {
       return false;
+    }
+  }
+
+  void die(Creature creature) {
+    for (Food f: foods) {
+      float distance = dist(location.x, location.y, creature.location.x, creature.location.y);
+      if (distance < 20) {
+        lifespan = 0.0;
+        //player.play();
+        //player.rewind();
+      }
     }
   }
 }

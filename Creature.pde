@@ -4,10 +4,13 @@ class Creature {
   PVector velocity;
   PVector acceleration;
 
+  //Variables for size, direction, slow down of acceleration
   float heading = 0;
   float size = 50;
   float damping = 0.900;
-  float strength = 100;
+
+  //Variables for repel force
+  //  float strength = 60;
   float r = 10;
 
   Creature() {
@@ -37,6 +40,21 @@ class Creature {
   void jump() {
     float angle = heading - PI/2;
     PVector force = PVector.fromAngle(angle);
+    force.mult(30.0);
+    applyForce(force);
+  }
+
+  void crawl() {
+    float angle = heading - PI/2;
+    PVector force = PVector.fromAngle(angle);
+    force.mult(0.5);
+    applyForce(force);
+  }
+
+  void backwards() {
+    float angle = heading - PI/2;
+    PVector force = PVector.fromAngle(angle);
+    force.mult(-0.5);
     applyForce(force);
   }
 
@@ -45,19 +63,36 @@ class Creature {
   }
 
   void edges() {
-    if ((location.x > width) || (location.x < 0)) velocity.x *= -1;
-    if ((location.y > height) || (location.y < 0)) velocity.y *= -1;
+    if (location.x > width) {
+      velocity.x *= -1;
+      location.x = width;
+    }
+    if (location.x < 0) {
+      velocity.x *= -1; 
+      location.x = 0;
+    }
+    if (location.y > height) {
+      velocity.y *= -1;
+      location.y = height;
+    }
+    if (location.y < 25) {
+      velocity.y *= -1;
+      location.y = 25;
+    }
   }
 
   void display() {
     stroke(0);
-    strokeWeight(2);
+    strokeWeight(1);
     pushMatrix();
     translate(location.x, location.y);
     rotate(heading);
-    fill(175);
+    fill(10, 200, 30);
     ellipse(0, 0, size, size);
     ellipse(0, -30, size/2, size/2);
+    fill(0);
+    ellipse(-10, -35, size/6, size/6);
+    ellipse(10, -35, size/6, size/6);
     popMatrix();
   }
 
