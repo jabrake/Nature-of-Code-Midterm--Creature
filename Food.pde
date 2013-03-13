@@ -98,7 +98,7 @@ class Food {
   void die(Creature creature) {
     for (Food f: foods) {
       float distance = dist(location.x, location.y, creature.location.x, creature.location.y);
-      if (distance < 20) {
+      if (distance < 40) {
         lifespan = 0.0;
       }
     }
