@@ -6,11 +6,10 @@ class Creature {
 
   //Variables for size, direction, slow down of acceleration
   float heading = 0;
-  float size = 50;
-  float damping = 0.900;
+  //float size = 50;
+  float damping = 0.930;
 
   //Variables for repel force
-  //  float strength = 60;
   float r = 10;
 
   Creature() {
@@ -36,21 +35,24 @@ class Creature {
     PVector f = force.get();
     acceleration.add(f);
   }
-
+  
+  //Jump Force
   void jump() {
     float angle = heading - PI/2;
     PVector force = PVector.fromAngle(angle);
     force.mult(30.0);
     applyForce(force);
   }
-
+  
+  //Move Forward Force
   void crawl() {
     float angle = heading - PI/2;
     PVector force = PVector.fromAngle(angle);
     force.mult(0.5);
     applyForce(force);
   }
-
+  
+  //Move Backwards Force
   void backwards() {
     float angle = heading - PI/2;
     PVector force = PVector.fromAngle(angle);
@@ -61,7 +63,8 @@ class Creature {
   void turn(float a) {
     heading += a;
   }
-
+  
+  //Boundaries for Frog to stay on Screen
   void edges() {
     if (location.x > width) {
       velocity.x *= -1;
@@ -95,7 +98,8 @@ class Creature {
     ellipse(10, -35, size/6, size/6);
     popMatrix();
   }
-
+  
+  //Repeller Force
   PVector repel(Food f) {
     PVector dir = PVector.sub(location, f.location);
     float d = dir.mag();

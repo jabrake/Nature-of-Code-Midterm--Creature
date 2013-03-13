@@ -32,14 +32,16 @@ class Food {
   void applyForce(PVector r) {
     acceleration.add(r);
   }
-
+  
+  //Apply Repeller Force to all Flies
   void applyRepeller(Creature creature) {
     for (Food f: foods) {
       PVector force = creature.repel(f);
       f.applyForce(force);
     }
   }
-
+  
+  //Boundaries for Flies 
   void boundaries() {
     float d = 50;
     PVector force = new PVector(0, 0);
@@ -62,6 +64,7 @@ class Food {
     applyForce(force);
   }
   
+  //More boundaries!
   void edges() {
     if (location.x > width+50) {
       velocity.x *= -1;
@@ -80,7 +83,8 @@ class Food {
       location.y = -50;
     }
   }
-
+  
+  //Boolean to Detect if Flies have been eaten
   boolean isDead() {
     if (lifespan < 1.0) {
       return true;
@@ -89,14 +93,13 @@ class Food {
       return false;
     }
   }
-
+  
+  //Collision Detection
   void die(Creature creature) {
     for (Food f: foods) {
       float distance = dist(location.x, location.y, creature.location.x, creature.location.y);
       if (distance < 20) {
         lifespan = 0.0;
-        //player.play();
-        //player.rewind();
       }
     }
   }

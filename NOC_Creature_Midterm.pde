@@ -12,16 +12,22 @@ ArrayList<Food> foods;
 boolean jumped;
 boolean strengthUp;
 boolean buzzPlayed;
+boolean gameStarted;
 int counter;
 float strength = 60;
+float size = 50;
 float timeCounter, timePassed, timeCounter2, timePassed2, totalCounter;
 PImage fly, frog;
 
 void setup() {
   size(800, 800);
+
+  //Initialize Classes and Minim Library
   creature = new Creature();
   foods = new ArrayList<Food>(); 
   minim = new Minim(this);
+
+  noCursor();
 
   //Fly Counter
   counter = 100;
@@ -37,14 +43,28 @@ void setup() {
   buzz = minim.loadFile("buzz.wav");
   win = minim.loadFile("win.wav");
 
+  //Add 100 "Food" objects
   for (int i = 0; i < 100; i++) {
     foods.add(new Food(new PVector(random(width), random(height))));
   }
-
-  ribbit.play();
 }
 
 void draw() {
+  gamePanel();
+  gameStart();
+
+  if (keyPressed) {
+    if (key == ENTER || key == RETURN) {
+      gameStarted = true;
+    }
+  }
+
+  if (gameStarted) {
+    runGame();
+  }
+}
+
+void runGame() {
   background(139, 198, 255);
 
   //Time Counters
@@ -71,38 +91,65 @@ void draw() {
 
   case 90:
     strength = 70;
+    size = 55;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 80:
     strength = 80;
+    size = 60;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 70:
     strength = 90;
+    size = 65;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 60:
     strength = 100;
+    size = 70;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 50:
     strength = 110;
+    size = 75;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 40:
     strength = 120;
+    size = 80;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 30:
     strength = 130;
+    size = 85;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 20:
     strength = 140;
+    size = 90;
+    ribbit.rewind();
+    ribbit.play();
     break;
 
   case 10:
     strength = 150;
+    size = 95;
+    ribbit.rewind();
+    ribbit.play();
     break;
   }
 
@@ -145,6 +192,73 @@ void draw() {
     }
   }
 
+  gamePanel();
+
+  //Game Over Condition
+  if (counter == 0) {
+    gameOver();
+    gameStarted = false;
+  }
+}
+
+//Jump Command
+void keyPressed() {
+  if (key == ' ' && !jumped) {
+    jump.play();
+    creature.jump();
+    timeCounter = millis();
+    jumped = true;
+  }
+}
+
+//Jump Reset
+void keyReleased() {
+  if (timePassed > 5000) {
+    jumped = false;
+    jump.rewind();
+  }
+}
+
+//Game Start State
+void gameStart() {
+
+  ribbit.play();
+  pushMatrix();
+  noStroke();
+  fill(139, 198, 255);
+  rect(0, 40, width, height-40);
+  popMatrix();
+  fill(0);
+  text("You are Hubert, a handicapped frog.", width/2-100, height/2-100);
+  text("You were born without a tongue so you must walk and hop to feed yourself.", width/2-220, height/2-50);
+  text("Use the arrow keys to move and the spacebar to jump.", width/2-150, height/2);
+  text("Press Enter/Return to start eating!", width/2-100, height/2+50);
+
+  if (keyPressed) {
+    if (key == 'n') {
+      println("pressed enter!");
+      ribbit.rewind();
+      ribbit.play();
+      fill(139, 198, 255, 100);
+    }
+  }
+}
+
+//Game Over State
+void gameOver() {
+  pushMatrix();
+  noStroke();
+  fill(139, 198, 255);
+  rect(0, 40, width, height-40);
+  popMatrix();
+  fill(0);
+  text("FOOD COMA! You beat the game in " + totalCounter + " seconds!", width/2-140, height/2);
+  buzz.pause();
+  win.play();
+  noLoop();
+}
+
+void gamePanel() {
   //Game Panel
   pushMatrix();
   fill(0);
@@ -182,42 +296,5 @@ void draw() {
     text("JUMP", 720, 25);
     popMatrix();
   }
-
-  //Game Over Condition
-  if (counter == 90) {
-    gameOver();
-  }
-}
-
-//Jump Command
-void keyPressed() {
-  if (key == ' ' && !jumped) {
-    jump.play();
-    creature.jump();
-    timeCounter = millis();
-    jumped = true;
-  }
-}
-
-//Jump Reset
-void keyReleased() {
-  if (timePassed > 5000) {
-    jumped = false;
-    jump.rewind();
-  }
-}
-
-//Game Over State
-void gameOver() {
-  pushMatrix();
-  noStroke();
-  fill(139, 198, 255);
-  rect(0, 40, width, height-40);
-  popMatrix();
-  fill(0);
-  text("GAME OVER! You beat the game in " + totalCounter, width/2-140, height/2);
-  buzz.pause();
-  win.play();
-  noLoop();
 }
 
